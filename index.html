@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>EcoBreath Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #0f172a; color: white; padding: 20px; }
+        .cards { display: flex; gap: 20px; margin-bottom: 20px; }
+        .card { background: #1e293b; padding: 20px; border-radius: 10px; flex: 1; text-align: center; }
+        .value { font-size: 2em; font-weight: bold; color: #38bdf8; }
+    </style>
+</head>
+<body>
+    <h1>EcoBreath IoT Monitor</h1>
+    <div class="cards">
+        <div class="card"><h3>CO2 (ppm)</h3><div id="co2" class="value">--</div></div>
+        <div class="card"><h3>PM2.5 (µg/m³)</h3><div id="pm" class="value">--</div></div>
+        <div class="card"><h3>Влажность почвы</h3><div id="soil" class="value">--</div></div>
+    </div>
+    <script>
+        async function fetchData() {
+            try {
+                const res = await fetch('http://localhost:8000/api/data');
+                const data = await res.json();
+                if(data.length > 0) {
+                    const last = data[data.length - 1];
+                    document.getElementById('co2').innerText = last.co2;
+                    document.getElementById('pm').innerText = last.pm25;
+                    document.getElementById('soil').innerText = last.soil_moisture + '%';
+                }
+            } catch(e) {}
+        }
+        setInterval(fetchData, 3000);
+    </script>
+</body>
+</html>
